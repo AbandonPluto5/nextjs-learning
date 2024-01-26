@@ -91,3 +91,34 @@ Next.js 学习记录...
    - 重新验证缓存
      - 使用`next.revalidate`选项设置时效
      - 使用路由段配置选项 `export const revalidate = 60`
+
+#### 中间件
+
+1. 简介: 可以用来处理请求之前需要进行的操作 可以基于传入的请求 重写、重定向、修改请求或响应头、或直接响应 项目中每个路由都会调用中间件
+2. 场景: 鉴权
+3. 使用方式: 项目根目录或 src 一级目录下定义 middleware.js 文件
+4. 执行顺序
+   - headers(next.config.js)
+   - redirects(next.config.js)
+   - 中间件(rewrites、redirects 等)
+   - beforeFiles(next.config.js 中的 rewrites)
+   - 基于文件系统的路由(public/、\_next/static/、app/等)
+   - afterFiles(next.config.js 中的 rewrites)
+   - 动态路由(/blog/[slug])
+   - fallback 中的(next.config.js 中的 rewrites)
+5. 指定匹配路径
+   两种方式
+   - 使用 matcher 配置项
+     - 路径必须以/开头
+     - 支持使用命名参数 如`/about/:path`匹配`/about/a`和`/about/b` 但是不匹配`/about/a/c`
+     - 命名参数可以使用修饰符 如`/about/:path*`匹配`/about/a/b/c`
+     - 也可以使用正则表达式替代 `/about/(.*)`等同于`/about/:path*`
+     - matcher 也支持数组形式 用于匹配多个路径
+     - matcher 的值必须是常量
+   - 使用条件语句 在 middleware 方法中判断并进行处理
+6. 处理 Cookie 在 middleware 中通过 get、getAll、set、delete 进行处理 如果是传入的请求 还可以通过 has 检查 cookie
+7. 处理 headers 在 middleware 中使用 NextResponse API 设置请求标头和响应标头
+8. 返回响应 在 middleware 中返回一个 NextResponse 或 Response 实例直接响应请求
+9. 高级中间件标记(next.config.js 中的配置项)
+   - skipTrailingSlashRedirect 跳过尾部斜杠重定向 当 url 上存在尾部斜杠时不自动重定向(默认是重定向会去掉尾部斜杠)
+   - skipMiddlewareUrlNormalize 跳过中间件对 Url 的规范化 应用于中间件对 Url 进行了统一处理 但是又需要使用原始的 Url 时
