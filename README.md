@@ -122,3 +122,16 @@ Next.js 学习记录...
 9. 高级中间件标记(next.config.js 中的配置项)
    - skipTrailingSlashRedirect 跳过尾部斜杠重定向 当 url 上存在尾部斜杠时不自动重定向(默认是重定向会去掉尾部斜杠)
    - skipMiddlewareUrlNormalize 跳过中间件对 Url 的规范化 应用于中间件对 Url 进行了统一处理 但是又需要使用原始的 Url 时
+
+#### 国际化
+
+实现方式
+
+1. 第一步: 使用浏览器中的语言首选项来判断要使用的区域设置(Next 官方推荐)
+   - 分析传入的请求 确定要使用的区域设置 通过 Accept-Language 请求头确定
+   - 第三方库
+     - negotiator 可以通过请求获取支持的语言
+     - @formatjs/intl-localematcher 匹配出并返回最合适的语言
+2. 第二步: 中间件处理 基于第一步对请求和分析和语言的匹配 通过中间件设置跳转对应的国际化路由地址 如访问`/dashboard`会跳转到`/en-US/dashboard`
+3. 第三步: 本地化 维护不同地区的 json 来映射翻译内容
+4. 静态生成 在布局或页面中使用 generateStaticParams
